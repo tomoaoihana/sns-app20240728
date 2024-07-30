@@ -6,7 +6,7 @@ import SignUp from "./pages/Signup";
 function App() {
   return (
     <BrowserRouter>
-      <p className="App">
+      <div className="App">
         <div>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -14,7 +14,7 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
           </Routes>
         </div>
-      </p>
+      </div>
     </BrowserRouter>
   );
 }
