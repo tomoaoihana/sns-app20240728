@@ -1,15 +1,24 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { authRepository } from "../repositories/Auth";
+import { SessionContext } from "../SessionProvider";
+import { Navigate } from "react-router-dom";
 
 function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // useContextの戻り値はオブジェクトなので、正しくデストラクチャします。
+  const { currentUser, setCurrentUser } = useContext(SessionContext);
+
   const signup = async () => {
     const user = await authRepository.signup(name, email, password);
-    console.log(user);
+    setCurrentUser(user);
+    // console.log(user);
   };
+
+  if (currentUser != null) return <Navigate to="/" replace />;
+
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col items-center">
