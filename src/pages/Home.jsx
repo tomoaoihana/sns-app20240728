@@ -1,18 +1,41 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SessionContext } from "../SessionProvider";
 import { Navigate } from "react-router-dom";
 import { SideMenu } from "../components/SideMenu";
 import { postRepository } from "../repositories/post";
+import { Post } from "../components/post";
 
 function Home() {
   // useContextの戻り値はオブジェクトなので、正しくデストラクチャします。
   const { currentUser } = useContext(SessionContext);
   const [content, setContent] = useState("");
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const createPost = async () => {
     const post = await postRepository.create(content, currentUser.id);
-    console.log("投稿したデータ:", post);
+    // console.log("投稿したデータ:", post);
+    //リアルタイムで更新できるように変更
+    //postの中にはpostのみで、post_viewの情報は含まれていないので、
+    //ここで追加でuserNameを追加する処理が必要
+
+    setPosts([
+      {
+        ...post,
+        userId: currentUser.id,
+        userName: currentUser.userName,
+      },
+      ...posts,
+    ]);
     setContent("");
+  };
+
+  const fetchPosts = async () => {
+    const posts = await postRepository.find();
+    setPosts(posts);
   };
 
   if (currentUser == null) return <Navigate to="/signin" replace />;
@@ -46,7 +69,11 @@ function Home() {
                   Post
                 </button>
               </div>
-              <div className="mt-4"></div>
+              <div className="mt-4">
+                {posts.map((post) => (
+                  <Post key={post.id} post={post} />
+                ))}
+              </div>
             </div>
             <SideMenu />
           </div>
