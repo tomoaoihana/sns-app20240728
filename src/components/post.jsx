@@ -3,7 +3,7 @@ import { SessionContext } from "../SessionProvider";
 
 export function Post(props) {
   const { currentUser } = useContext(SessionContext);
-  console.log(currentUser.id);
+  // console.log(currentUser.id);
 
   return (
     <div className="mt-4 bg-white p-4 rounded-lg shadow-md">

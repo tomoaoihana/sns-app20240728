@@ -4,12 +4,16 @@ import { Navigate } from "react-router-dom";
 import { SideMenu } from "../components/SideMenu";
 import { postRepository } from "../repositories/post";
 import { Post } from "../components/post";
+import { Pagination } from "../components/Pagenation";
+
+const limit = 5;
 
 function Home() {
   // useContextの戻り値はオブジェクトなので、正しくデストラクチャします。
   const { currentUser } = useContext(SessionContext);
   const [content, setContent] = useState("");
   const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     fetchPosts();
@@ -33,9 +37,21 @@ function Home() {
     setContent("");
   };
 
-  const fetchPosts = async () => {
-    const posts = await postRepository.find();
+  const fetchPosts = async (page) => {
+    const posts = await postRepository.find(page, limit);
     setPosts(posts);
+  };
+
+  const moveToNext = async () => {
+    const nextPage = page + 1;
+    await fetchPosts(nextPage);
+    setPage(nextPage);
+  };
+
+  const moveToPrev = async () => {
+    const prevPage = page - 1;
+    await fetchPosts(prevPage);
+    setPage(prevPage);
   };
 
   if (currentUser == null) return <Navigate to="/signin" replace />;
@@ -74,6 +90,11 @@ function Home() {
                   <Post key={post.id} post={post} />
                 ))}
               </div>
+              <Pagination
+                onPrev={page > 1 ? moveToPrev : null}
+                onNext={posts.length >= limit ? moveToNext : null}
+                page={page}
+              />
             </div>
             <SideMenu />
           </div>
