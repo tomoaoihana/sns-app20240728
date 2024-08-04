@@ -11,7 +11,10 @@ export function Post(props) {
       <p className="text-gray-700">{props.post.content}</p>
 
       {currentUser.id === props.post.userId && (
-        <button className="text-blue-500 hover:underline cursor-pointer focus:outline-none">
+        <button
+          onClick={() => props.onDelete(props.post.id)}
+          className="text-blue-500 hover:underline cursor-pointer focus:outline-none"
+        >
           削除
         </button>
       )}
